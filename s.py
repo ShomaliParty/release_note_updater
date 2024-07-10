@@ -1,5 +1,5 @@
-def add(a, b):
-    return a + b
+def multiply(a, b):
+    return a * b
 
 # Test the corrected method
 print(add(3, 5))  # Should print 8
