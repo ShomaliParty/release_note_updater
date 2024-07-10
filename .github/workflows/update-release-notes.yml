@@ -1,0 +1,56 @@
+name: Update Changelog on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main  # Adjust this to your main branch name if different
+
+jobs:
+  update-changelog:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Extract pull request information
+        id: pr_info
+        run: |
+          echo "PR_TITLE=$(jq -r '.pull_request.title' < "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
+          echo "PR_NUMBER=$(jq -r '.pull_request.number' < "$GITHUB_EVENT_PATH")" >> $GITHUB_ENV
+
+      - name: Extract commit messages
+        id: extract_commits
+        run: |
+          COMMITS=$(git log --pretty=format:"%s" $GITHUB_SHA^..$GITHUB_SHA)
+          echo "::set-output name=commits::$COMMITS"
+
+      - name: Update changelog
+        run: |
+          PR_TITLE=${{ env.PR_TITLE }}
+          PR_NUMBER=${{ env.PR_NUMBER }}
+          COMMITS=${{ steps.extract_commits.outputs.commits }}
+          CHANGELOG="CHANGELOG.md"
+          
+          echo "Updating changelog with PR #$PR_NUMBER: $PR_TITLE"
+          
+          # Add new entry to CHANGELOG.md
+          echo -e "\n- PR #$PR_NUMBER: $PR_TITLE" >> $CHANGELOG
+
+          # Show updated CHANGELOG.md
+          cat $CHANGELOG
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add CHANGELOG.md
+          git commit -m "Update changelog for PR #${{ env.PR_NUMBER }}: ${{ env.PR_TITLE }}"
+          git push
