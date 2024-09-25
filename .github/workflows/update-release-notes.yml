@@ -31,10 +31,10 @@ jobs:
 
       - name: Update releaseNotes.md
         run: |
-          echo "--" >> releaseNotes.md
+          echo "=====" >> releaseNotes.md
           echo "$merge_date" >> releaseNotes.md
           echo "$commit_message" >> releaseNotes.md
-          echo "--" >> releaseNotes.md
+          echo "=====" >> releaseNotes.md
 
 
       - name: Commit and push changes
