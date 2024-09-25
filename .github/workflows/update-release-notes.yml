@@ -1,4 +1,4 @@
-name: Update Release Notes
+name: Update releaseNotes
 
 on:
   pull_request:
