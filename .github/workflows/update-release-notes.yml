@@ -24,13 +24,16 @@ jobs:
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
           MERGE_DATE=$(date +'%Y-%m-%d')
-          echo "commit_message=${COMMIT_MSG}" >> $GITHUB_ENV
+          echo "commit_message<<EOF" >> $GITHUB_ENV
+          echo "${COMMIT_MSG}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
           echo "merge_date=${MERGE_DATE}" >> $GITHUB_ENV
 
       - name: Update releaseNotes.md
         run: |
           echo "$merge_date" >> releaseNotes.md
           echo "$commit_message" >> releaseNotes.md
+
       - name: Commit and push changes
         run: |
           git add releaseNotes.md
