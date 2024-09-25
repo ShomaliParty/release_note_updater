@@ -35,6 +35,8 @@ jobs:
           echo "$commit_message" >> releaseNotes.md
 
       - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure GITHUB_TOKEN is available
         run: |
           git add releaseNotes.md
           git commit -m "Update release notes"
